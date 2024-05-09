@@ -8,7 +8,6 @@ import (
 	"github.com/coredns/coredns/core/dnsserver"
 	"github.com/coredns/coredns/plugin"
 	"github.com/coredns/coredns/plugin/pkg/dnstest"
-	clog "github.com/coredns/coredns/plugin/pkg/log"
 	"github.com/coredns/coredns/plugin/pkg/replacer"
 	"github.com/coredns/coredns/request"
 	"github.com/miekg/dns"
@@ -42,7 +41,7 @@ func setup(c *caddy.Controller) error {
 	return nil
 }
 
-var rlog = clog.NewWithPlugin("example")
+//var rlog = clog.NewWithPlugin("example")
 
 const format = `{remote} ` + replacer.EmptyValue + ` {>id} {type} {class} {name} {proto} {port}`
 
@@ -50,7 +49,7 @@ const format = `{remote} ` + replacer.EmptyValue + ` {>id} {type} {class} {name}
 
 // ServeDNS implements the plugin.Handler interface.
 func (d Dump) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
-	rlog.Debug("ServeDNS(): Received response")
+	//rlog.Debug("ServeDNS(): Received response")
 	fmt.Println("ServeDNS(): Received response")
 	state := request.Request{W: w, Req: r}
 	rep := replacer.New()
@@ -84,7 +83,7 @@ func NewResponsePrinter(w dns.ResponseWriter) *ResponsePrinter {
 
 // WriteMsg calls the underlying ResponseWriter's WriteMsg method and prints "example" to standard output.
 func (r *ResponsePrinter) WriteMsg(res *dns.Msg) error {
-	rlog.Info("dump")
+
 	fmt.Println("WriteMsg(): dump")
 	return r.ResponseWriter.WriteMsg(res)
 }
