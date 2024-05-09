@@ -3,8 +3,6 @@ package dump
 import (
 	"context"
 	"fmt"
-	"io"
-	"os"
 
 	"github.com/coredns/caddy"
 	"github.com/coredns/coredns/core/dnsserver"
@@ -48,7 +46,7 @@ var rlog = clog.NewWithPlugin("example")
 
 const format = `{remote} ` + replacer.EmptyValue + ` {>id} {type} {class} {name} {proto} {port}`
 
-var output io.Writer = os.Stdout
+//var output io.Writer = os.Stdout
 
 // ServeDNS implements the plugin.Handler interface.
 func (d Dump) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
@@ -58,8 +56,9 @@ func (d Dump) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (i
 	rep := replacer.New()
 	trw := dnstest.NewRecorder(w)
 
-	fmt.Fprintln(output, rep.Replace(ctx, state, trw, format))
-	fmt.Println("ServeDNS(): replace:\r\n", rep.Replace(ctx, state, trw, format))
+	//fmt.Fprintln(output, rep.Replace(ctx, state, trw, format))
+	fmt.Println("ServeDNS(): will log")
+	fmt.Println(rep.Replace(ctx, state, trw, format))
 	return plugin.NextOrFailure(d.Name(), d.Next, ctx, w, r)
 }
 
