@@ -2,7 +2,7 @@ package dump
 
 import (
 	"context"
-	"fmt"
+	"log"
 
 	"github.com/coredns/caddy"
 	"github.com/coredns/coredns/core/dnsserver"
@@ -16,25 +16,25 @@ type Dump struct {
 }
 
 func init() {
-	fmt.Println("init")
+	log.Printf("init")
 	plugin.Register("dump", setup)
 }
 
 func setup(c *caddy.Controller) error {
-	fmt.Println("setup(): start")
+	log.Printf("setup(): start")
 	for c.Next() {
-		fmt.Println("setup(): c.Next()")
+		log.Printf("setup(): c.Next()")
 		if c.NextArg() {
-			fmt.Println("setup(): c.NextArg()")
+			log.Printf("setup(): c.NextArg()")
 			return plugin.Error("dump", c.ArgErr())
 		}
 	}
 
 	dnsserver.GetConfig(c).AddPlugin(func(next plugin.Handler) plugin.Handler {
-		fmt.Println("setup(): AddPlugin()")
-		return Dump{Next: next}
+		log.Printf("setup(): AddPlugin()")
+		return &Dump{Next: next}
 	})
-	fmt.Println("setup(): ok")
+	log.Printf("setup(): ok")
 	return nil
 }
 
@@ -45,42 +45,25 @@ func setup(c *caddy.Controller) error {
 //var output io.Writer = os.Stdout
 
 // ServeDNS implements the plugin.Handler interface.
-func (d Dump) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
+func (d *Dump) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
 	//rlog.Debug("ServeDNS(): Received response")
-	fmt.Println("ServeDNS(): Received response")
+	log.Printf("ServeDNS(): Received response")
 	//state := request.Request{W: w, Req: r}
 	//rep := replacer.New()
 	//trw := dnstest.NewRecorder(w)
 
 	//fmt.Fprintln(output, rep.Replace(ctx, state, trw, format))
-	fmt.Println("ServeDNS(): will log")
-	//fmt.Println(rep.Replace(ctx, state, trw, format))
+	log.Printf("ServeDNS(): will log")
+	//log.Printf(rep.Replace(ctx, state, trw, format))
 	return plugin.NextOrFailure(d.Name(), d.Next, ctx, w, r)
 }
 
 // Name implements the Handler interface.
-func (d Dump) Name() string {
-	fmt.Println("Name()")
+func (d *Dump) Name() string {
+	log.Printf("Name()")
 	return "dump"
 }
-func (d Dump) Ready() bool {
-	fmt.Println("Ready()")
+func (d *Dump) Ready() bool {
+	log.Printf("Ready()")
 	return true
-}
-
-// ResponsePrinter wrap a dns.ResponseWriter and will write example to standard output when WriteMsg is called.
-type ResponsePrinter struct {
-	dns.ResponseWriter
-}
-
-// NewResponsePrinter returns ResponseWriter.
-func NewResponsePrinter(w dns.ResponseWriter) *ResponsePrinter {
-	return &ResponsePrinter{ResponseWriter: w}
-}
-
-// WriteMsg calls the underlying ResponseWriter's WriteMsg method and prints "example" to standard output.
-func (r *ResponsePrinter) WriteMsg(res *dns.Msg) error {
-
-	fmt.Println("WriteMsg(): dump")
-	return r.ResponseWriter.WriteMsg(res)
 }
