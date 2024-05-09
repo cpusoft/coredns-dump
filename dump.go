@@ -7,9 +7,6 @@ import (
 	"github.com/coredns/caddy"
 	"github.com/coredns/coredns/core/dnsserver"
 	"github.com/coredns/coredns/plugin"
-	"github.com/coredns/coredns/plugin/pkg/dnstest"
-	"github.com/coredns/coredns/plugin/pkg/replacer"
-	"github.com/coredns/coredns/request"
 	"github.com/miekg/dns"
 )
 
@@ -43,7 +40,7 @@ func setup(c *caddy.Controller) error {
 
 //var rlog = clog.NewWithPlugin("example")
 
-const format = `{remote} ` + replacer.EmptyValue + ` {>id} {type} {class} {name} {proto} {port}`
+//const format = `{remote} ` + replacer.EmptyValue + ` {>id} {type} {class} {name} {proto} {port}`
 
 //var output io.Writer = os.Stdout
 
@@ -51,13 +48,13 @@ const format = `{remote} ` + replacer.EmptyValue + ` {>id} {type} {class} {name}
 func (d Dump) ServeDNS(ctx context.Context, w dns.ResponseWriter, r *dns.Msg) (int, error) {
 	//rlog.Debug("ServeDNS(): Received response")
 	fmt.Println("ServeDNS(): Received response")
-	state := request.Request{W: w, Req: r}
-	rep := replacer.New()
-	trw := dnstest.NewRecorder(w)
+	//state := request.Request{W: w, Req: r}
+	//rep := replacer.New()
+	//trw := dnstest.NewRecorder(w)
 
 	//fmt.Fprintln(output, rep.Replace(ctx, state, trw, format))
 	fmt.Println("ServeDNS(): will log")
-	fmt.Println(rep.Replace(ctx, state, trw, format))
+	//fmt.Println(rep.Replace(ctx, state, trw, format))
 	return plugin.NextOrFailure(d.Name(), d.Next, ctx, w, r)
 }
 
