@@ -3,6 +3,7 @@ package dump
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -31,7 +32,7 @@ func TestSetup(t *testing.T) {
 			`dump blah`, true,
 		},
 	}
-
+	fmt.Println(len(tests))
 	for i, test := range tests {
 		c := caddy.NewTestController("dns", test.input)
 		err := setup(c)
@@ -58,12 +59,14 @@ func TestDump(t *testing.T) {
 	r := new(dns.Msg)
 	r.SetQuestion("example.org.", dns.TypeA)
 	r.Id = 42053
+	fmt.Println("r is:\r\n", r)
 
 	rec := dnstest.NewRecorder(&test.ResponseWriter{})
 
 	dump.ServeDNS(ctx, rec, r)
 
 	dumped := f.String()
+	fmt.Println("dumped:\r\n", dumped)
 	if !strings.Contains(dumped, "42053 A IN example.org. udp") {
 		t.Errorf("Expected it to be dumped. Dumped string: %s", dumped)
 	}
